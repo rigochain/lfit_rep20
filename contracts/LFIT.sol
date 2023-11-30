@@ -927,12 +927,13 @@ contract LFIT is Ownable, KIP7Burnable, KIP7Pausable, KIP7Metadata {
     }
 
     function _lock(address holder, uint256 value, uint256 releaseTime) internal returns(bool) {
-        _balances[holder] = _balances[holder].sub(value);
-        timelockList[holder].push( LockInfo(releaseTime, value) );
+    require(releaseTime > now, "Release time must be in the future"); // 현재 시간보다 releaseTime이 큰지 검증
+    _balances[holder] = _balances[holder].sub(value);
+    timelockList[holder].push( LockInfo(releaseTime, value) );
 
-        emit Lock(holder, value, releaseTime);
-        return true;
-    }
+    emit Lock(holder, value, releaseTime);
+    return true;
+}
 
     function _unlock(address holder, uint256 idx) internal returns(bool) {
         LockInfo storage lockinfo = timelockList[holder][idx];
