@@ -920,12 +920,6 @@ contract LFIT is Ownable, KIP7Burnable, KIP7Pausable, KIP7Metadata {
         return true;
     }
 
-    function unlock(address holder, uint256 idx) public onlyOwner returns (bool) {
-        require( timelockList[holder].length > idx, "There is not lock info.");
-        _unlock(holder,idx);
-        return true;
-    }
-
     function _lock(address holder, uint256 value, uint256 releaseTime) internal returns(bool) {
     require(releaseTime > now, "Release time must be in the future"); // 현재 시간보다 releaseTime이 큰지 검증
     _balances[holder] = _balances[holder].sub(value);
@@ -947,14 +941,6 @@ contract LFIT is Ownable, KIP7Burnable, KIP7Pausable, KIP7Metadata {
         _balances[holder] = _balances[holder].add(releaseAmount);
 
         return true;
-    }
-
-    function releaseLock(address holder) external onlyOwner returns (bool success){
-        require(timelockList[holder].length > 0, "There is not lock info.");
-        for (uint256 i = timelockList[holder].length; i > 0; i--) {
-            _unlock(holder, i - 1);
-        }
-        success = true;
     }
 
     function _autoUnlock(address holder) internal returns(bool) {
